@@ -6,7 +6,7 @@ class Bank
       @balance = 0 
   end
 
-  def verify_aadhar()
+  def verify_aadhar
     puts "Verifying #{@adhar_no}"
       # adhr_len = @adharNo.to_s.length
     unless @adhar_no.match?(/^[2-9]\d{11}$/)
@@ -20,7 +20,7 @@ class Bank
       # verificationAadhar()
   end
 
-  def verify_mobile()
+  def verify_mobile
       # mobileNo_len = @mobileNo.to_s.length
     unless @mobile_no.match?(/[1-9]{1}[0-9]{9}$/)
       raise "Invalid mobile number"
@@ -36,38 +36,13 @@ class Bank
   end
  
 
-  def verify_name()
-    
-    # puts "Enter Adhar no: "
-    # @adharNo = gets.chomp
-    # verificationAadhar()
-    # puts "Enter Mobile no: "
-    # @mobileNo =gets.chomp
-    # mobileNoVerification()
-    # @otp = rand(1000..9999)
-    # puts "Pop Up : Otp = {#@otp}"
-    # puts "Enter Otp: "
-    # @userOtp = Integer(gets.chomp)
-    # begin
-    #    if(@otp == @userOtp)
-    #       puts "Aadhar card is linked with mobile! Verification Successfull" 
-    #   else
-    #      raise"Invalid otp"
-    #   end
-    # rescue => e 
-    #   puts "Error #{e}"
-    #   puts "Enter Otp: "
-    #   @userOtp = Integer(gets.chomp)
-    #   retry
-    # end
-    # puts "Enter Full Name: "
-    # @name = gets.chomp
+  def verify_name
     unless @name.match?(/\A[a-zA-Z]+\s([a-zA-Z]+)*\z/)
       raise "Please Enter First Name and Last Name #{@name}"
     end
   end
 
-  def verify_balance()
+  def verify_balance
     if @balance < 100 && @acc_type == "Saving"
       raise "Initial Balance for Saving Account must be 100 or above"
     elsif @balance < 500 && @acc_type == "Current"
@@ -75,13 +50,13 @@ class Bank
     end
   end
 
- def verify_pass()
+ def verify_pass
     if @pass.length != 4
       raise "Password must be of only 4 digits!!"
     end
  end
 
-  def verify_acc()
+  def verify_acc
     puts "Enter Account Number: "
     acc_number = gets.chomp.to_i
     @account = @@accounts_array.find{|a| a[:acc_no] == acc_number}

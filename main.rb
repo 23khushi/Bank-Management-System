@@ -68,15 +68,15 @@ while (true)
                 account.create_account(user)
             end
         when 2
-            account.deposit()
+            account.deposit
         when 3 
-            account.withdraw()
+            account.withdraw
         when 4
-             account.show_balance()
+             account.show_balance
         when 5
-            puts "Feature incoming"
+             account.update_account
         when 6
-            account.delete_account()
+            account.delete_account
         when 7
             puts "Thank You !!! Exiting from the System."
             break

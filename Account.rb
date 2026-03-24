@@ -7,17 +7,17 @@ class Account < Bank
     def create_account(user)
         begin
             @adhar_no = user[:adhar_no]
-            verify_aadhar()
+            verify_aadhar
             @acc_type = user[:acc_type]
             @mobile_no = user[:mobile_no]
-            verify_mobile()
+            verify_mobile
             @name = user[:name]
-            verify_name()
+            verify_name
             @acc_no = user[:acc_no]
             @balance = user[:balance]
-            verify_balance()
+            verify_balance
             @pass = user[:pass]
-            verify_pass()  
+            verify_pass 
             
             @acc_no = rand(10000000..99999999)
             @acc_no.to_s
@@ -33,15 +33,15 @@ class Account < Bank
                 balance: @balance,
                 pass: @pass}
 
-            return @@accounts_array
+            # return @@accounts_array
             puts "#{@@accounts_array}"
         rescue => e
             puts "Account creation failed: #{e}"
         end
     end
 
-    def deposit() # Deposit & Withdraw  & Balance methods ko private banakar handle kro
-        acc = verify_acc()
+    def deposit # Deposit & Withdraw  & Balance methods ko private banakar handle kro
+        acc = verify_acc
         begin
             if acc
                 puts "Enter Amount"
@@ -49,12 +49,12 @@ class Account < Bank
                 perform_deposit(acc, amount)
             end
         rescue => e
-            puts "Error: #{CustomException.new}"
+            puts "Error: Invalid Amount"
         end
     end
 
-    def withdraw()
-       acc = verify_acc()
+    def withdraw
+       acc = verify_acc
         begin
            if acc
                 puts "Enter Amount"
@@ -62,25 +62,44 @@ class Account < Bank
                 perform_withdraw(acc , amount)
            end
         rescue => e
-            puts "Error : #{CustomException.new}"  
+            puts "Error: Invalid Amount"
         end
     end   
 
 
-    def show_balance()
-        acc = verify_acc()
+    def show_balance
+        acc = verify_acc
         if acc
           perform_balance(acc)  
         end
     end
 
-    def delete_account()
-        acc = verify_acc()
+    def delete_account
+        acc = verify_acc
         if acc
             perform_delete(acc)
         end
     end
 
+    def update_account
+        acc = verify_acc
+        begin
+            if acc
+                puts "Enter the element you want to update
+                \n1)aadhar Number
+                \n2)Mobile Number
+                \n3)Account Type"
+                type = Integer(gets.chomp)
+                perform_update(acc, type)
+            end
+        rescue ArgumentError
+            puts "Please enter valid input "
+        end
+        puts "#{acc}"
+    end
+
+
+    
     private
     def perform_deposit(acc , deposit_amount)
         begin
@@ -98,7 +117,7 @@ class Account < Bank
 
     def perform_withdraw(acc, withdraw_amount)
         begin
-             if withdraw_amount <=0
+             if withdraw_amount <= 0
                 raise "Invalid Amount"
             elsif @account[:balance] < 100 || withdraw_amount > @account[:balance]
                 raise "Oops!! Not Enough Balance"
@@ -122,5 +141,45 @@ class Account < Bank
             puts "Account deleted for account no #{@acc_no}"
             puts "#{@@accounts_array}"
         end
+    end
+
+    def perform_update(acc,type)
+        begin
+            if(type == 1)
+                puts "Enter aadhar number: "
+                @adhar_no = gets.chomp
+                if @adhar_no == acc[:adhar_no]
+                    puts "Same as existing aadhar number"
+                end
+                acc[:adhar_no] = @adhar_no
+                verify_aadhar
+            elsif(type == 2)
+                puts "Enter mobile number"
+                @mobile_no = gets.chomp
+                if @mobile_no == acc[:mobile_no]
+                    puts "Same as existing mobile number"
+                end
+                acc[:mobile_no] = @mobile_no
+                verify_mobile
+            elsif(type == 3)
+                puts "Enter which account you want to switch: 
+                \n1)Saving Account
+                \n2)Current Account"
+                switch_type = Integer(gets.chomp)
+                if(switch_type == 1)
+                    if acc[:acc_type] ==  "Saving"
+                        puts "Same as existing account"
+                    end
+                    acc[:acc_type] = "Saving"
+                elsif(switch_type == 2)
+                    if acc[:acc_type] ==  "Current"
+                        puts "Same as existing account"
+                    end
+                   acc[:acc_type] = "Current"
+                end
+            end
+        rescue => e
+            puts "Error: #{e}"
+        end  
     end
 end
