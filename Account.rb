@@ -33,7 +33,7 @@ class Account < Bank
                 balance: @balance,
                 pass: @pass}
 
-            @@accounts_array
+            return @@accounts_array
             puts "#{@@accounts_array}"
         rescue => e
             puts "Account creation failed: #{e}"
