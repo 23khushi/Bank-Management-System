@@ -1,3 +1,4 @@
+require_relative './database.rb'
 class Account < Bank
     attr_accessor  :deposit_amount, :withdraw_amount
     def initialize()
@@ -24,14 +25,23 @@ class Account < Bank
             puts "Congratulations!!!! Account Successfully Opened"
             puts "Note down your account number: #{@acc_no}"
 
-            @@accounts_array << {
-                adhar_no: @adhar_no,
-                mobile_no: @mobile_no,
-                name: @name, 
-                acc_type: @acc_type,
-                acc_no: @acc_no, 
-                balance: @balance,
-                pass: @pass}
+            begin
+                CONN.exec_params(
+                    'INSERT INTO users (adhar_no, mobile_no, name, acc_type, acc_no, balance, pass) VALUES ($1, $2 , $3, $4, $5, $6, $7)',
+                    [@adhar_no, @mobile_no, @name, @acc_type, @acc_no, @balance, @pass]
+                )
+                puts 'Insert successful.'
+            rescue PG::Error => e
+                puts "Error: #{e.message}"
+            end
+            # @@accounts_array << {
+            #     adhar_no: @adhar_no,
+            #     mobile_no: @mobile_no,
+            #     name: @name, 
+            #     acc_type: @acc_type,
+            #     acc_no: @acc_no, 
+            #     balance: @balance,
+            #     pass: @pass}
 
             # return @@accounts_array
             puts "#{@@accounts_array}"
@@ -99,7 +109,7 @@ class Account < Bank
     end
 
 
-    
+
     private
     def perform_deposit(acc , deposit_amount)
         begin

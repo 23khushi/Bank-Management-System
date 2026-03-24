@@ -1,11 +1,5 @@
-require_relative "./Bank.rb"
-require_relative "./Account.rb"
-
-class CustomException < StandardError
-    def initialize(message = "Invalid Input")
-        super(message)
-    end
-end
+require_relative './Bank.rb'
+require_relative './Account.rb'
 
   users = [
     {adhar_no: "985455555555",
