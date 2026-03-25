@@ -7,9 +7,9 @@ class Account < Bank
  
     def create_account(user)
         begin
+            @acc_type = user[:acc_type]
             @adhar_no = user[:adhar_no]
             verify_aadhar
-            @acc_type = user[:acc_type]
             @mobile_no = user[:mobile_no]
             verify_mobile
             @name = user[:name]
@@ -34,17 +34,7 @@ class Account < Bank
             rescue PG::Error => e
                 puts "Error: #{e.message}"
             end
-            # @@accounts_array << {
-            #     adhar_no: @adhar_no,
-            #     mobile_no: @mobile_no,
-            #     name: @name, 
-            #     acc_type: @acc_type,
-            #     acc_no: @acc_no, 
-            #     balance: @balance,
-            #     pass: @pass}
 
-            # return @@accounts_array
-            puts "#{@@accounts_array}"
         rescue => e
             puts "Account creation failed: #{e}"
         end
@@ -105,7 +95,6 @@ class Account < Bank
         rescue ArgumentError
             puts "Please enter valid input "
         end
-        puts "#{acc}"
     end
 
 
@@ -113,12 +102,21 @@ class Account < Bank
     private
     def perform_deposit(acc , deposit_amount)
         begin
-            if deposit_amount <=0
+            amount =  @account[0]['balance']
+            amt =  amount.to_i
+            if deposit_amount <= 0
                 raise "Invalid Amount"
-            else
-                @account[:balance] = @account[:balance]  + deposit_amount
+            else 
+                amt = amt  + deposit_amount
                 puts "Deposit successfully Completed! "
-                puts "Total Balance: #{@account[:balance]}"
+                
+                # UPDATE BALANCE 
+                CONN.exec_params(
+                    'UPDATE users SET balance = $1 where acc_no = $2',
+                    [amt,@acc_number]
+                )
+                puts "Updated Successfully! "
+                puts "Total Balance: #{amt}"
             end
         rescue => e
             puts "Error: #{e}"
@@ -127,14 +125,20 @@ class Account < Bank
 
     def perform_withdraw(acc, withdraw_amount)
         begin
+             amount =  @account[0]['balance']
+             amt =  amount.to_i
              if withdraw_amount <= 0
                 raise "Invalid Amount"
-            elsif @account[:balance] < 100 || withdraw_amount > @account[:balance]
+            elsif  amt < 100 || withdraw_amount >  amt
                 raise "Oops!! Not Enough Balance"
             else
-                @account[:balance] = @account[:balance] - withdraw_amount
-                puts "Withdraw successfully Completed! "
-                puts "Total Balance: #{@account[:balance]}"
+                 amt =  amt - withdraw_amount
+               CONN.exec_params(
+                    'UPDATE users SET balance = $1 where acc_no = $2',
+                    [amt,@acc_number]
+                )
+                puts "Updated Successfully! "
+                puts "Total Balance: #{amt}"
             end
         rescue => e
             puts "Error: #{e}"
@@ -142,14 +146,22 @@ class Account < Bank
     end
 
     def perform_balance(acc)
-        puts "Total Balance: #{@account[:balance]}"
+        bal = CONN.exec_params(
+            'SELECT balance FROM USERS WHERE acc_no = $1',
+            [@acc_number]
+        )
+        puts bal.values
     end
 
     def perform_delete(acc)
         begin
-            account = @@accounts_array.delete_if{|a| a[:acc_no] == @acc_no}
-            puts "Account deleted for account no #{@acc_no}"
-            puts "#{@@accounts_array}"
+            CONN.exec_params(
+                'DELETE FROM users WHERE acc_no = $1',
+                [@acc_number]
+            )
+            puts "Account deleted for account no #{@acc_number}"
+        rescue PG::Error => e
+            puts "Error: #{e.message}"
         end
     end
 
@@ -158,34 +170,52 @@ class Account < Bank
             if(type == 1)
                 puts "Enter aadhar number: "
                 @adhar_no = gets.chomp
-                if @adhar_no == acc[:adhar_no]
+                if @adhar_no == acc[0]['adhar_no']
                     puts "Same as existing aadhar number"
                 end
-                acc[:adhar_no] = @adhar_no
                 verify_aadhar
+                CONN.exec_params(
+                    'UPDATE users set adhar_no = $1 where acc_no = $2',
+                    [@adhar_no, @acc_number ]
+                )
+                puts "Updated aadhar no successfully!"
+                
             elsif(type == 2)
                 puts "Enter mobile number"
                 @mobile_no = gets.chomp
-                if @mobile_no == acc[:mobile_no]
+                if @mobile_no == acc[0]['mobile_no']
                     puts "Same as existing mobile number"
                 end
-                acc[:mobile_no] = @mobile_no
                 verify_mobile
+                 CONN.exec_params(
+                    'UPDATE users set mobile_no = $1 where acc_no = $2',
+                    [@mobile_no, @acc_number]
+                ) 
+                 puts "Updated mobile no successfully!"
+
             elsif(type == 3)
                 puts "Enter which account you want to switch: 
                 \n1)Saving Account
                 \n2)Current Account"
                 switch_type = Integer(gets.chomp)
                 if(switch_type == 1)
-                    if acc[:acc_type] ==  "Saving"
+                    if acc[0]['acc_type'] ==  "Saving"
                         puts "Same as existing account"
                     end
-                    acc[:acc_type] = "Saving"
+                     CONN.exec_params(
+                    'UPDATE users set acc_type = $1 where acc_no = $2',
+                    ["Saving", @acc_number]
+                    ) 
+                    puts "Updated to Saving Account"
                 elsif(switch_type == 2)
-                    if acc[:acc_type] ==  "Current"
+                    if acc[0]['acc_type'] ==  "Current"
                         puts "Same as existing account"
                     end
-                   acc[:acc_type] = "Current"
+                    CONN.exec_params(
+                    'UPDATE users set acc_type = $1 where acc_no = $2',
+                    ["Current", @acc_number]
+                    )   
+                    puts "Updated to Current Account"
                 end
             end
         rescue => e

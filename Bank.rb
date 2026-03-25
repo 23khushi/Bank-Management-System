@@ -1,38 +1,49 @@
+require_relative './database.rb'
+
 class Bank
   attr_accessor :adhar_no , :name,  :balance, :acc_type, :accounts_array, :pass, :mobile_no, :otp, :acc_no
-  @@accounts_array = []
   
   def initialize()
       @balance = 0 
   end
 
   def verify_aadhar
-    puts "Verifying #{@adhar_no}"
-      # adhr_len = @adharNo.to_s.length
+   
     unless @adhar_no.match?(/^[2-9]\d{11}$/)
       raise "Invalid aadhar Number"
     end
-    if @@accounts_array.any?{|a| a[:adhar_no] == @adhar_no  && a[:acc_type] == @acc_type }
+
+    d1 = CONN.exec_params(
+      'SELECT adhar_no, acc_type FROM users where adhar_no = $1 AND acc_type = $2',
+      [@adhar_no, @acc_type]
+    )
+
+    if !d1.values.empty?
       raise "Duplicate aadhar number"
     end
-      # puts "Enter Adhar no: "
-      # @adharNo = gets.chomp
-      # verificationAadhar()
+
+    # if @@accounts_array.any?{|a| a[:adhar_no] == @adhar_no  && a[:acc_type] == @acc_type }
+    #   raise "Duplicate aadhar number"
+    # end
   end
 
   def verify_mobile
-      # mobileNo_len = @mobileNo.to_s.length
     unless @mobile_no.match?(/[1-9]{1}[0-9]{9}$/)
       raise "Invalid mobile number"
     end
-   	if @@accounts_array.any?{|f| f[:mobile_no] == @mobile_no  && f[:acc_type] == @acc_type}
-      puts @accType
-      puts @mobile_no
-    	raise "Duplicate Mobile no"
-		end
-      # puts @account&.dig(:mobile_no)
-      # puts "Enter Mobile no: "
-      # @mobileNo = gets.chomp
+
+      d1 = CONN.exec_params(
+      'SELECT mobile_no, acc_type FROM users where mobile_no = $1 AND acc_type = $2',
+      [@mobile_no, @acc_type]
+    )
+
+     p d1.values 
+     p d1.values.empty? 
+
+    if !d1.values.empty?
+      raise "Duplicate mobile number"
+    end
+
   end
  
 
@@ -58,9 +69,18 @@ class Bank
 
   def verify_acc
     puts "Enter Account Number: "
-    acc_number = gets.chomp.to_i
-    @account = @@accounts_array.find{|a| a[:acc_no] == acc_number}
-    unless @account
+    @acc_number = gets.chomp.to_i
+
+    @account = CONN.exec_params(
+      'SELECT * FROM users WHERE acc_no = $1',
+      [@acc_number]
+    )
+
+    puts @account.values
+
+    # @account = @@accounts_array.find{|a| a[:acc_no] == acc_number}
+
+    if @account.values.empty? == true
       puts "Account does not exist"
       return nil
     end
@@ -68,7 +88,9 @@ class Bank
     begin
       puts "Enter password"
       password = gets.chomp
-      if ((@account[:pass] == password))
+ 
+      puts @account[0]['pass']
+      if ((@account[0]['pass'] == password))
         puts "Account Verification successfull!!"
       else
         raise "Incorrect Password or Account doesnt exist!"
