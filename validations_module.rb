@@ -1,14 +1,8 @@
 require_relative './database.rb'
 
-class Bank
-  attr_accessor :adhar_no , :name,  :balance, :acc_type, :accounts_array, :pass, :mobile_no, :otp, :acc_no
-  
-  def initialize()
-      @balance = 0 
-  end
-
-  def verify_aadhar
-   
+module Validations
+ 
+  def verify_aadhar  
     unless @adhar_no.match?(/^[2-9]\d{11}$/)
       raise "Invalid aadhar Number"
     end
@@ -18,32 +12,25 @@ class Bank
       [@adhar_no, @acc_type]
     )
 
-    if !d1.values.empty?
+    if d1.values.empty? == false
       raise "Duplicate aadhar number"
     end
-
-    # if @@accounts_array.any?{|a| a[:adhar_no] == @adhar_no  && a[:acc_type] == @acc_type }
-    #   raise "Duplicate aadhar number"
-    # end
   end
+
 
   def verify_mobile
     unless @mobile_no.match?(/[1-9]{1}[0-9]{9}$/)
       raise "Invalid mobile number"
     end
 
-      d1 = CONN.exec_params(
+    d1 = CONN.exec_params(
       'SELECT mobile_no, acc_type FROM users where mobile_no = $1 AND acc_type = $2',
       [@mobile_no, @acc_type]
     )
 
-     p d1.values 
-     p d1.values.empty? 
-
-    if !d1.values.empty?
+    if d1.values.empty? == false
       raise "Duplicate mobile number"
     end
-
   end
  
 
@@ -53,6 +40,7 @@ class Bank
     end
   end
 
+
   def verify_balance
     if @balance < 100 && @acc_type == "Saving"
       raise "Initial Balance for Saving Account must be 100 or above"
@@ -61,35 +49,35 @@ class Bank
     end
   end
 
- def verify_pass
+
+  def verify_pass
     if @pass.length != 4
       raise "Password must be of only 4 digits!!"
     end
- end
+  end
+
 
   def verify_acc
-    puts "Enter Account Number: "
-    @acc_number = gets.chomp.to_i
+    begin
+      puts "Enter Account Number: "
+      @acc_number = gets.chomp.to_i
 
-    @account = CONN.exec_params(
-      'SELECT * FROM users WHERE acc_no = $1',
-      [@acc_number]
-    )
-
-    puts @account.values
-
-    # @account = @@accounts_array.find{|a| a[:acc_no] == acc_number}
-
-    if @account.values.empty? == true
-      puts "Account does not exist"
-      return nil
+      @account = CONN.exec_params(
+        'SELECT * FROM users WHERE acc_no = $1',
+        [@acc_number]
+      )
+      puts @account.values
+      if @account.values.empty? == true
+        puts "Account does not exist"
+        return nil
+      end
+    rescue ArgumentError
+      puts "Please Enter valid account number"
     end
-    
+
     begin
       puts "Enter password"
       password = gets.chomp
- 
-      puts @account[0]['pass']
       if ((@account[0]['pass'] == password))
         puts "Account Verification successfull!!"
       else
@@ -102,17 +90,16 @@ class Bank
       begin
         userOtp = Integer(gets.chomp)
       rescue ArgumentError
+        puts "Invalid input for otp"
       end
       
       if(userOtp == otp)
         puts "Verification Successfull"
         return @account
       else
-        raise CustomException.new("Invalid input")
+        raise "Invalid input"
       end
-      # rescue => e
-      #   puts "Error #{e}"
-      # end
+      
     rescue => e
       puts "Error #{e}"
       retry

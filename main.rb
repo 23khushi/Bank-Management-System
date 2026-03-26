@@ -1,4 +1,3 @@
-require_relative './Bank.rb'
 require_relative './Account.rb'
 
   users = [
@@ -10,13 +9,13 @@ require_relative './Account.rb'
 #      balance:500,
 #      pass: "2222"
 #     }
-  { adhar_no: "567456798034",
-    mobile_no: "8739001245",
-    name: "Prisha Bhide", 
+  { adhar_no: "333344445034",
+    mobile_no: "7687000000",
+    name: "John Doe", 
     acc_type: "Current",
     acc_no: "0", 
-    balance:1000,
-    pass: "3333" 
+    balance:2300,
+    pass: "4567" 
   }
 
 #   { adhar_no: "673289013456",
