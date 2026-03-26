@@ -2,8 +2,8 @@ require_relative './database.rb'
 require_relative './validations_module.rb'
 class Account 
     include Validations
-    attr_accessor :adhar_no , :name,  :balance, :acc_type, :accounts_array, :pass, :mobile_no, :otp, :acc_no,:deposit_amount, :withdraw_amount
-
+    attr_accessor :name, :pass, :mobile_no, :otp, :adhar_no, :acc_type
+    attr_reader :balance, :acc_no
     def create_account(user)
         begin
             @acc_type = user[:acc_type]
