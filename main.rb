@@ -9,13 +9,13 @@ require_relative './Account.rb'
 #      balance:500,
 #      pass: "2222"
 #     }
-  { adhar_no: "333344445034",
-    mobile_no: "7687000000",
-    name: "John Doe", 
+  { adhar_no: "333344443456",
+    mobile_no: "7687000039",
+    name: "Paul Singh", 
     acc_type: "Current",
     acc_no: "0", 
-    balance:2300,
-    pass: "4567" 
+    balance:5000,
+    pass: "3467" 
   }
 
 #   { adhar_no: "673289013456",
