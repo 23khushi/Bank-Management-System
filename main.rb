@@ -4,38 +4,33 @@ require_relative './Account.rb'
 #    { acc_type: "Saving",
 #      adhar_no: "985455555555",
 #      mobile_no: "7685940876",
-#      name: "Khushi Solanki", 
-#      acc_no: "0", 
-#      balance:500,
-#      pass: "2222"
-#     }
-  { adhar_no: "333344443456",
-    mobile_no: "7687000039",
-    name: "Paul Singh", 
-    acc_type: "Current",
-    acc_no: "0", 
-    balance:5000,
-    pass: "3467" 
-  }
+#      name: "Khushi Solanki",
+#      bank_name: "HDFC",
+#      initial_bal: 500,
+#      pass: "2222",
+#      acc_otp: "1234"
+#     },
 
-#   { adhar_no: "673289013456",
-#     mobile_no: "8739001245",
-#     name: "Deshna Patwa", 
-#     acc_type: "Saving",
-#     acc_no: "0", 
-#     balance:1500,
-#     pass: "2323" 
+
+#   {  acc_type: "Current",
+#      adhar_no: "895455555555",
+#      mobile_no: "4556677898",
+#      name: "Disha Patel",
+#      bank_name: "ICICI",
+#      initial_bal: 1500,
+#      pass: "1111",
+#      acc_otp: "1234"
 #   },
 
-#   { adhar_no: "233445456576",
-#     mobile_no: "7685940876",
-#     name: "Khushi Solanki", 
-#     acc_type: "Current",
-#     acc_no: "0", 
-#     balance:3000,
-#     pass: "1111"
-#   }
-
+  {  acc_type: "Saving",
+     adhar_no: "678490383802",
+     mobile_no: "9845689446",
+     name: "Chinisha Patil",
+     bank_name: "hdfc",
+     initial_bal: 300,
+     pass: "6667",
+     acc_otp: "1234"
+  }
   ]
 
 account = Account.new
