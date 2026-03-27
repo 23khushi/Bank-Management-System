@@ -1,7 +1,23 @@
 require_relative './database.rb'
 
-module Validations
- 
+module User_Validations
+  
+   OTP = "1234" 
+
+   def verify_bank_name
+    bank_name = @bank_name.upcase
+    unless bank_name == "HDFC" || bank_name == "ICICI"
+      raise "Invalid Bank Name"
+    end
+  end
+
+  def verify_otp
+    unless @acc_otp == User_Validations::OTP
+      raise "Invalid OTP"
+    end
+  end
+
+
   def verify_aadhar  
     unless @adhar_no.match?(/^[2-9]\d{11}$/)
       raise "Invalid aadhar Number"
@@ -41,10 +57,10 @@ module Validations
   end
 
 
-  def verify_balance
-    if @balance < 100 && @acc_type == "Saving"
+  def verify_initial_balance
+    if @initial_bal < 100 && @acc_type == "Saving"
       raise "Initial Balance for Saving Account must be 100 or above"
-    elsif @balance < 500 && @acc_type == "Current"
+    elsif @initial_bal < 500 && @acc_type == "Current"
       raise "Initial Balance for Current Account must be 500 or above"
     end
   end
@@ -83,7 +99,7 @@ module Validations
       else
         raise "Incorrect Password or Account doesnt exist!"
       end
-      otp = rand(1000..9999)
+      @otp = rand(1000..9999)
       puts "Pop Up : Otp = #{otp}"
       puts "Enter Otp: "
 
