@@ -23,12 +23,12 @@ require_relative './Account.rb'
 #   },
 
   {  acc_type: "Saving",
-     adhar_no: "678490383802",
-     mobile_no: "9845689446",
-     name: "Chinisha Patil",
+     adhar_no: "657483947564",
+     mobile_no: "7654239090",
+     name: "Trisha Deshmukh",
      bank_name: "hdfc",
-     initial_bal: 300,
-     pass: "6667",
+     initial_bal: 400,
+     pass: "3456",  
      acc_otp: "1234"
   }
   ]
