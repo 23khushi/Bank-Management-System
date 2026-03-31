@@ -1,7 +1,10 @@
 require_relative './database.rb'
 require_relative './Bank_Module.rb'
+require_relative './Queries_Module.rb'
+
 class Account 
 	include Bank
+	include Fire_Queries
 	attr_accessor :name, :pass, :mobile_no, :otp, :adhar_no, :acc_type, :acc_otp, :initial_bal
 	attr_reader :balance, :acc_no, :bank_name, :ifsc_code, :uuid, :bank_id
 
@@ -106,13 +109,10 @@ class Account
 	            raise "Invalid Amount"
 	        else 
 	            amt = amt  + deposit_amount
-	            puts "Deposit successfully Completed! "
 							
 	            # UPDATE BALANCE 
-	            CONN.exec_params(
-	                'UPDATE accounts SET balance = $1 where acc_no = $2',
-	                [amt,@acc_number]
-	            )
+				update_query('accounts', {balance: amt}, {acc_no: @acc_number})
+				puts "Deposit successfully Completed! "
 	            puts "Updated Successfully! "
 	            puts "Total Balance: #{amt}"
 	        end
@@ -132,10 +132,7 @@ class Account
 	            raise "Oops!! Not Enough Balance"
 	        else
 	             amt =  amt - withdraw_amount
-	           CONN.exec_params(
-	                'UPDATE accounts SET balance = $1 where acc_no = $2',
-	                [amt,@acc_number]
-	            )
+				update_query('accounts', {balance: amt}, {acc_no: @acc_number})
 	            puts "Updated Successfully! "
 	            puts "Total Balance: #{amt}"
 	        end
@@ -146,11 +143,8 @@ class Account
 
 	# PRIVATE SHOW BALANCE
 	def perform_balance(acc)
-	    bal = CONN.exec_params(
-	        'SELECT balance FROM accounts WHERE acc_no = $1',
-	        [@acc_number]
-	    )
-	    puts "Total Balance : #{bal.values.join('')}" 
+	    bal = select_query(['balance'], 'accounts', {acc_no: @acc_number})
+	    puts "Total Balance : #{bal.getvalue(0,0)}" 
 	end
 
 	# PRIVATE DELETE ACCOUNT
@@ -176,10 +170,8 @@ class Account
 	                puts "Same as existing aadhar number"
 	            end
 	            verify_aadhar
-	            CONN.exec_params(
-	                'UPDATE users set adhar_no = $1 from accounts where users.uuid = accounts.user_id AND acc_no = $2',
-	                [@adhar_no, @acc_number ]
-	            )
+				puts @acc_number
+				update_query('users', {adhar_no: @adhar_no}, {acc_no: @acc_number},'FROM accounts', 'users.uuid = accounts.user_id')
 	            puts "Updated aadhar no successfully!"
 							
 	        elsif(type == 2)
@@ -189,10 +181,7 @@ class Account
 	                puts "Same as existing mobile number"
 	            end
 	            verify_mobile
-	             CONN.exec_params(
-	                'UPDATE users set mobile_no = $1 from accounts where users.uuid = accounts.user_id AND acc_no = $2',
-	                [@mobile_no, @acc_number]
-	            ) 
+	             update_query('users', {mobile_no: @mobile_no}, {acc_no: @acc_number},'FROM accounts', 'users.uuid = accounts.user_id')
 	             puts "Updated mobile no successfully!"
 
 	        elsif(type == 3)
@@ -204,20 +193,13 @@ class Account
 	                if acc[0]['acc_type'] ==  "Saving"
 	                    puts "Same as existing account"
 	                end
-
-					CONN.exec_params(
-	                'UPDATE accounts set acc_type = $1 where acc_no = $2',
-	                ["Saving", @acc_number]
-	                ) 
+					update_query('accounts', {acc_type: 'Saving'}, {acc_no: @acc_number})
 	                puts "Updated to Saving Account"
 	            elsif(switch_type == 2)
 	                if acc[0]['acc_type'] ==  "Current"
 	                    puts "Same as existing account"
 	                end
-	                CONN.exec_params(
-	                'UPDATE users set acc_type = $1 where acc_no = $2',
-	                ["Current", @acc_number]
-	                )   
+	                update_query('accounts', {acc_type: 'Current'}, {acc_no: @acc_number})
 	                puts "Updated to Current Account"
 	            end
 	        end
