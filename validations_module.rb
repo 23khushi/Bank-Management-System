@@ -4,6 +4,7 @@ module User_Validations
   
    OTP = "1234" 
 
+   # BANK NAME VERIFICATION
    def verify_bank_name
     bank_name = @bank_name.upcase
     unless bank_name == "HDFC" || bank_name == "ICICI"
@@ -11,6 +12,7 @@ module User_Validations
     end
   end
 
+  # OTP VERIFICATION TO OPEN ACCOUNT
   def verify_otp
     unless @acc_otp == User_Validations::OTP
       raise "Invalid OTP"
@@ -18,6 +20,7 @@ module User_Validations
   end
 
 
+  # AADHAR VERIFICATION
   def verify_aadhar  
     unless @adhar_no.match?(/^[2-9]\d{11}$/)
       raise "Invalid aadhar Number"
@@ -27,13 +30,13 @@ module User_Validations
       'SELECT EXISTS (SELECT 1, bank_name, acc_type FROM users JOIN accounts on users.uuid = accounts.user_id where adhar_no = $1 AND bank_name = $2 AND acc_type = $3)',
       [@adhar_no, @bank_name, @acc_type]
     )
-
-    if d1.values.join('') == 't'
+    if d1.values == 'f'
       raise "Duplicate aadhar number"
     end
   end
 
 
+  # MOBILE VERIFICATION
   def verify_mobile
     unless @mobile_no.match?(/[1-9]{1}[0-9]{9}$/)
       raise "Invalid mobile number"
@@ -44,12 +47,13 @@ module User_Validations
       [@mobile_no, @bank_name, @acc_type]
     )
    
-    if d1.values.join('') == 't'
+    if d1.values == 'f'
       raise "Duplicate mobile number"
     end
   end
  
 
+  # NAME VERIFICATION
   def verify_name
     unless @name.match?(/\A[a-zA-Z]+\s([a-zA-Z]+)*\z/)
       raise "Please Enter First Name and Last Name #{@name}"
@@ -57,6 +61,7 @@ module User_Validations
   end
 
 
+  # INITAL BALANCE VERIFIATION
   def verify_initial_balance
     if @initial_bal < 100 && @acc_type == "Saving"
       raise "Initial Balance for Saving Account must be 100 or above"
@@ -65,14 +70,18 @@ module User_Validations
     end
   end
 
-
+ # PASSWORD VERIFICATION
   def verify_pass
-    if @pass.length != 4
+    unless @pass.match(/\A\d+\z/)
+      raise "Invalid input for password"
+    end
+    if @pass.length != 4 
       raise "Password must be of only 4 digits!!"
     end
   end
 
 
+  # ACCOUNT VERIFICATION
   def verify_acc
     begin
       puts "Enter Account Number: "
@@ -122,62 +131,5 @@ module User_Validations
     end
   end 
 
-  def insert_records
-    begin
-			result = CONN.exec(
-				'SELECT * FROM users where adhar_no = $1',
-				[@adhar_no]
-			)
-			if result.values.empty? == false
-
-				bank_id =  CONN.exec(
-					'SELECT bank_id FROM bank WHERE bank_name = $1',
-					[@bank_name.upcase]
-				)
-				user_id = result[0]['uuid']
-				puts user_id
-				bid = bank_id.values.join('').to_i
-				@acc_no = rand(10000000..99999999)
-				@acc_no.to_s
-				puts "Congratulations!!!! Account Successfully Opened"
-				puts "Note down your account number: #{@acc_no}"
-				CONN.exec_params(
-					'INSERT INTO accounts( acc_type, acc_no, balance, user_id, bank_id) VALUES ($1, $2, $3, $4 , $5)',
-					[@acc_type, @acc_no, @balance, user_id ,bid ] 
-				)
-
-			else
-
-				CONN.exec_params(
-					'INSERT INTO users (adhar_no, mobile_no, name, initial_bal, pass, bank_name) VALUES ($1, $2 , $3, $4, $5, $6)',
-					[@adhar_no, @mobile_no, @name, @initial_bal, @pass , @bank_name]
-				)
-				puts 'Insert successful.'
-				user_id = CONN.exec_params(
-      		'SELECT uuid FROM users WHERE adhar_no = $1',
-      			[@adhar_no]
-      		) 
-				uid = user_id.values.join('')
-
-     		bank_id = CONN.exec_params(
-      		'SELECT bank_id FROM bank WHERE bank_name = $1',
-      		[@bank_name.upcase]
-      		)
-			  bid = bank_id.values.join('').to_i
-				@acc_no = rand(10000000..99999999)
-				@acc_no.to_s
-				puts "Congratulations!!!! Account Successfully Opened"
-				puts "Note down your account number: #{@acc_no}"
-
-				CONN.exec_params(
-					'INSERT INTO accounts( acc_type, acc_no, balance, user_id, bank_id) VALUES ($1, $2, $3, $4 , $5)',
-					[@acc_type, @acc_no, @balance, uid , bid] 
-				)
-			end
-		rescue PG::Error => e
-				puts "Error: #{e.message}"
-		end
-
-
-  end
+  
 end    
