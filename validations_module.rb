@@ -19,6 +19,13 @@ module User_Validations
     end
   end
 
+  # Account Type Verification
+  def acc_type_verify
+    type = @acc_type.downcase
+    unless type == "saving" || type == "current"
+      raise "Invalid account type"
+    end
+  end
 
   # AADHAR VERIFICATION
   def verify_aadhar  

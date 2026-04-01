@@ -21,14 +21,14 @@ require_relative './Account.rb'
 #      acc_otp: "1234"
 #   },
 
-  {  acc_type: "Saving",
+  {  acc_type: "fdf",
      adhar_no: "222888888888",
      mobile_no: "9307376666",
      name: "Harsh mehta",
      bank_name: "ICICI",
      initial_bal: 2000,
      pass: "2233",  
-     acc_otp: "1234"
+     acc_otp: "4567"
      
   }
   ]
