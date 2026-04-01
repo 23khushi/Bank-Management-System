@@ -27,10 +27,11 @@ module User_Validations
     end
 
     d1 = CONN.exec_params(
-      'SELECT EXISTS (SELECT 1, bank_name, acc_type FROM users JOIN accounts on users.uuid = accounts.user_id where adhar_no = $1 AND bank_name = $2 AND acc_type = $3)',
+      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank on accounts.bank_id = bank.bank_id WHERE users.adhar_no = $1 AND bank.bank_name = $2 AND accounts.acc_type = $3)',
       [@adhar_no, @bank_name, @acc_type]
     )
-    if d1.values == 'f'
+
+    if d1.values.join('') == 't'
       raise "Duplicate aadhar number"
     end
   end
@@ -43,11 +44,11 @@ module User_Validations
     end
 
     d1 = CONN.exec_params(
-      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id where mobile_no = $1 AND bank_name = $2 AND acc_type = $3)',
+      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank on accounts.bank_id = bank.bank_id WHERE users.mobile_no = $1 AND bank.bank_name = $2 AND accounts.acc_type = $3)',
       [@mobile_no, @bank_name, @acc_type]
     )
    
-    if d1.values == 'f'
+    if d1.values.join('') == 't'
       raise "Duplicate mobile number"
     end
   end
@@ -88,7 +89,7 @@ module User_Validations
       @acc_number = gets.chomp.to_i
 
       @account = CONN.exec_params(
-        'SELECT * FROM accounts JOIN users on accounts.user_id = users.uuid WHERE acc_no = $1', 
+        'SELECT * FROM accounts JOIN users on accounts.user_id = users.uuid WHERE accounts.acc_no = $1 AND accounts.deleted_on IS NULL', 
         [@acc_number]
       )
 
@@ -131,5 +132,25 @@ module User_Validations
     end
   end 
 
+  # VERIFICATION FOR SHOWING ALL ACCOUNTS OF SPECIFIC USER
+  def verify_user_accounts
+    begin
+      puts "Enter aadhar no"
+      adhar = gets.chomp
+      unless adhar.match?(/^[2-9]\d{11}$/)
+        raise "Invalid aadhar Number"
+      end
+    rescue => e
+      puts "Error: #{e}"
+      retry
+    end
+    @aadhar_card = select_query(['adhar_no'], 'users', {adhar_no: adhar})
+    if @aadhar_card
+      return @aadhar_card.getvalue(0,0)
+    else
+      raise "Does not exist in our database"
+    end
+
+  end
   
 end    
