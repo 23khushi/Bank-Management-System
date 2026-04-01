@@ -21,13 +21,13 @@ require_relative './Account.rb'
 #      acc_otp: "1234"
 #   },
 
-  {  acc_type: "Current",
-     adhar_no: "555888888888",
-     mobile_no: "7233239012",
-     name: "Trisha Deshmukh",
-     bank_name: "HDFC",
-     initial_bal: 850,
-     pass: "4567",  
+  {  acc_type: "Saving",
+     adhar_no: "222888888888",
+     mobile_no: "9307376666",
+     name: "Harsh mehta",
+     bank_name: "ICICI",
+     initial_bal: 2000,
+     pass: "2233",  
      acc_otp: "1234"
      
   }

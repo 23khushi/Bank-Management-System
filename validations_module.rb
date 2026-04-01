@@ -87,7 +87,6 @@ module User_Validations
     begin
       puts "Enter Account Number: "
       @acc_number = gets.chomp.to_i
-
       @account = CONN.exec_params(
         'SELECT * FROM accounts JOIN users on accounts.user_id = users.uuid WHERE accounts.acc_no = $1 AND accounts.deleted_on IS NULL', 
         [@acc_number]
@@ -150,7 +149,24 @@ module User_Validations
     else
       raise "Does not exist in our database"
     end
-
   end
-  
+
+  def generate_account_number
+    begin
+				@acc_no = rand(10000000..99999999)
+        duplicate_account_no?(acc_no)
+				@acc_no.to_s
+			rescue => e
+				puts "Error: #{e}"
+				retry	
+			end
+  end
+
+  def duplicate_account_no?(acc_no)
+    data = select_query(['acc_no'], 'accounts', {acc_no: @acc_no})
+    puts data.values
+    if !data.values.empty?
+      raise "Duplicate account number"
+    end 
+  end   
 end    
