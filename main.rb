@@ -1,5 +1,4 @@
 require_relative './Account.rb'
-
   users = [
 #    { acc_type: "Saving",
 #      adhar_no: "985455555555",
@@ -23,13 +22,14 @@ require_relative './Account.rb'
 #   },
 
   {  acc_type: "Current",
-     adhar_no: "883888488831",
+     adhar_no: "555888888888",
      mobile_no: "7233239012",
      name: "Trisha Deshmukh",
      bank_name: "HDFC",
      initial_bal: 850,
      pass: "4567",  
      acc_otp: "1234"
+     
   }
   ]
 
@@ -47,7 +47,8 @@ while (true)
            \n4)Check Balance
            \n5)Update account
            \n6)Delete account
-           \n7)Exit"
+           \n7)Users All accounts
+           \n8)Exit"
 
         input = Integer(gets.chomp)
         case input
@@ -66,6 +67,8 @@ while (true)
         when 6
             account.delete_account
         when 7
+            account.show_user_accounts
+        when 8
             puts "Thank You !!! Exiting from the System."
             break
         else 

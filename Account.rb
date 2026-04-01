@@ -1,6 +1,7 @@
 require_relative './database.rb'
 require_relative './Bank_Module.rb'
 require_relative './Queries_Module.rb'
+require 'terminal-table'
 
 class Account 
 	include Bank
@@ -99,6 +100,20 @@ class Account
 	end
 
 
+   #SHOW ALL ACCOUNTS
+  def show_user_accounts
+	begin
+		accounts = verify_user_accounts
+		if accounts
+			show_all_accounts(accounts)
+			# puts show.getvalue(0,0)
+			# puts show.class
+		end
+	rescue => e
+		puts "Error: #{e}"
+	end
+end
+
 	# PRIVATE DEPOSIT AMOUNT
 	private
 	def perform_deposit(acc , deposit_amount)
@@ -150,10 +165,7 @@ class Account
 	# PRIVATE DELETE ACCOUNT
 	def perform_delete(acc)
 	    begin
-	        CONN.exec_params(
-	            'DELETE FROM accounts WHERE acc_no = $1',
-	            [@acc_number]
-	        )
+	        delete_query
 	        puts "Account deleted for account no #{@acc_number}"
 	    rescue PG::Error => e
 	        puts "Error: #{e.message}"
@@ -207,4 +219,28 @@ class Account
 	        puts "Error: #{e}"
 	    end  
 	end
+
+	#PRIVATE USERS ALL ACCOUNTS.
+	def show_all_accounts(aadhar_card)
+		# begin
+	
+		users_acc = CONN.exec_params(
+			'SELECT users.name, accounts.acc_type, bank.bank_name FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank ON accounts.bank_id = bank.bank_id WHERE users.adhar_no = $1 AND accounts.deleted_on IS NULL',
+			[@aadhar_card.getvalue(0,0)]
+		)
+		
+		p users_acc.values
+		rows = []
+		rows = users_acc.values.each do |row|
+	 		rows << [row[0],row[1],row[3]]
+		end
+		table = Terminal::Table.new(
+			headings: ["Name" , "Account type", "Bank name"],
+			rows: rows
+		)
+		
+		puts table
+		
+	end	
+
 end

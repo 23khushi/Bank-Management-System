@@ -57,6 +57,7 @@ module Fire_Queries
   	end 
   end 
 
+  # UPDATE QUERY
   def update_query(table_name, update, condition, join_clause = nil, extra = nil)
 	value = []
 	set_column = update.keys.each_with_index.map do |key, index|
@@ -79,4 +80,16 @@ module Fire_Queries
 	
 	CONN.exec_params(query,value)
   end
+
+
+ # SOFT DELETE QUERY
+  def delete_query
+	# query = "UPDATE users SET deleted_on = NOW() FROM accounts WHERE users.uuid = accounts.user_id AND acc_no = $1"
+	# CONN.exec_params(query, [@acc_number])
+	query = "UPDATE accounts SET deleted_on = NOW() FROM users WHERE users.uuid = accounts.user_id AND acc_no = $1"
+	CONN.exec_params(query, [@acc_number])
+	
+  end	
+
+
 end
