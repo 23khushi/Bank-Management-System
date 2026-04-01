@@ -14,6 +14,7 @@ class Account
 	def create_account(user)
 		begin
 			@acc_type = user[:acc_type]
+			acc_type_verify
 			@bank_name = user[:bank_name]
 			verify_bank_name
 			@adhar_no = user[:adhar_no]
