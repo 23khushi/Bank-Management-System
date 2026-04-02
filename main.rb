@@ -1,4 +1,6 @@
-require_relative './Account.rb'
+# require_relative './Account.rb'
+require_relative './Bank.rb'
+# require_relative './User.rb'
   users = [
 #    { acc_type: "Saving",
 #      adhar_no: "985455555555",
@@ -21,61 +23,62 @@ require_relative './Account.rb'
 #      acc_otp: "1234"
 #   },
 
-  {  acc_type: "fdf",
-     adhar_no: "222888888888",
-     mobile_no: "9307376666",
+  {  acc_type: "Current",
+     adhar_no: "2abcd234",
+     mobile_no: "9309375666",
      name: "Harsh mehta",
-     bank_name: "ICICI",
+     bank_name: "HDFC",
      initial_bal: 2000,
      pass: "2233",  
-     acc_otp: "4567"
+     acc_otp: "1234"
      
   }
   ]
 
-account = Account.new
+# account = Account.new
+bank = Bank.new
 
+bank.insert_bank_details
+# puts "Inserted Successfully"
 
+# while (true)
+#     begin
+#         puts "Enter the Operation you want to perform
+#            \n1)New Customer Registration
+#            \n2)Deposit Money 
+#            \n3)Withdraw Money
+#            \n4)Check Balance
+#            \n5)Update account
+#            \n6)Delete account
+#            \n7)Users All accounts
+#            \n8)Exit"
 
-
-while (true)
-    begin
-        puts "Enter the Operation you want to perform
-           \n1)New Customer Registration
-           \n2)Deposit Money 
-           \n3)Withdraw Money
-           \n4)Check Balance
-           \n5)Update account
-           \n6)Delete account
-           \n7)Users All accounts
-           \n8)Exit"
-
-        input = Integer(gets.chomp)
-        case input
-        when 1
-            users.each do |user|
-                account.create_account(user)
-            end
-        when 2
-            account.deposit
-        when 3 
-            account.withdraw
-        when 4
-             account.show_balance
-        when 5
-             account.update_account
-        when 6
-            account.delete_account
-        when 7
-            account.show_user_accounts
-        when 8
-            puts "Thank You !!! Exiting from the System."
-            break
-        else 
-            puts "Invalid Input"
-        end
-    rescue ArgumentError
-        puts "Error: Please Enter valid input"
-        retry
-    end
-end
+#         input = Integer(gets.chomp)
+#         case input
+#         when 1
+#             users.each do |user|
+#                 account.create_account(user)
+#             end
+#         when 2
+#             account.deposit
+#         when 3 
+#             account.withdraw
+#         when 4
+#              account.show_balance
+#         when 5
+#              account.update_account
+#         when 6
+#             account.delete_account
+#         when 7
+#             account.show_user_accounts
+#         when 8
+#             puts "Thank You !!! Exiting from the System."
+#             break
+#         else 
+#             puts "Invalid Input"
+#         end
+#     rescue ArgumentError
+#         puts "Error: Please Enter valid input"
+#         retry
+#     end
+# end
