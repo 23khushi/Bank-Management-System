@@ -1,5 +1,6 @@
-require_relative './User.rb'
-module Bank_Validation
+# require_relative './User.rb'
+
+module BankValid
    # BANK NAME VERIFICATION
   BANK_DETAILS = {hdfc: ['HDFC0000007', 'HDFC0000029', 'HDFC0000148', 'HDFC0000001', 'HDFC0000002'], icici: [ 'ICIC0000338', 'ICIC0001966', 	'ICIC0006493', 'ICIC0000985', 'ICIC0000039']}
   def verify_bank_name

@@ -1,6 +1,5 @@
 require_relative './database.rb'
 require_relative './User.rb'
-
 module User_Validations
   
   # OTP VERIFICATION TO OPEN ACCOUNT
