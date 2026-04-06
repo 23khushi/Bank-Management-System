@@ -1,6 +1,5 @@
 require_relative './database.rb'
 require_relative './User.rb'
-
 module User_Validations
   
   # OTP VERIFICATION TO OPEN ACCOUNT
@@ -18,7 +17,7 @@ module User_Validations
       raise "Invalid aadhar Number"
     end
     d1 = CONN.exec_params(
-      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank on accounts.bank_id = bank.bank_id WHERE users.adhar_no = $1 AND bank.bank_name = $2 AND accounts.acc_type = $3)',
+      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank on accounts.ifsc_code = bank.ifsc_code WHERE users.adhar_no = $1 AND bank.bank_name = $2 AND accounts.acc_type = $3)',
       [@adhar_no, @bank_name, @acc_type]
     )
     if d1.values.flatten.first == 't'
@@ -33,7 +32,7 @@ module User_Validations
       raise "Invalid mobile number"
     end
     d1 = CONN.exec_params(
-      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank on accounts.bank_id = bank.bank_id WHERE users.mobile_no = $1 AND bank.bank_name = $2 AND accounts.acc_type = $3)',
+      'SELECT EXISTS (SELECT 1 FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank on accounts.ifsc_code = bank.ifsc_code WHERE users.mobile_no = $1 AND bank.bank_name = $2 AND accounts.acc_type = $3)',
       [@mobile_no, @bank_name, @acc_type]
     )
   

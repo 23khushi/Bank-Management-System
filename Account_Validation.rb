@@ -18,9 +18,11 @@ module Account_Validation
     begin
       puts "Enter Account Number: "
       @acc_number = gets.chomp.to_i
+      puts "Enter IFSC code: "
+      @code = gets.chomp
       @account = CONN.exec_params(
-        'SELECT * FROM accounts JOIN users on accounts.user_id = users.uuid WHERE accounts.acc_no = $1 AND accounts.deleted_on IS NULL', 
-        [@acc_number]
+        'SELECT * FROM accounts JOIN users on accounts.user_id = users.uuid JOIN bank on bank.ifsc_code = accounts.ifsc_code WHERE accounts.acc_no = $1 AND accounts.ifsc_code = $2 AND accounts.deleted_on IS NULL', 
+        [@acc_number, @code]
       )
 
       if @account.values.empty? == true
@@ -87,7 +89,7 @@ module Account_Validation
   def generate_account_number
     begin
 		@acc_no = rand(10000000..99999999)
-        duplicate_account_no?(acc_no)
+      duplicate_account_no?(@acc_no)
 		@acc_no.to_s
 	rescue => e
 		puts "Error: #{e}"

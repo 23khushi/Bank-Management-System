@@ -1,8 +1,7 @@
 require_relative './database.rb'
 
 module Fire_Queries
-
-    
+	
  # SELECT QUERY
   def select_query(column, table_name, condition)
 	query = "SELECT #{column.join(', ')} FROM #{ table_name}" 
