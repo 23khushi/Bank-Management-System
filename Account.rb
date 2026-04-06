@@ -11,33 +11,6 @@ class Account
 	attr_reader :balance, :acc_no, :ifsc_code, :uuid, :bank_id
 
 
-	# DEPOSIT AMOUNT
-	def deposit 
-		acc = verify_acc
-		begin
-			if acc
-				puts "Enter Amount"
-				amount = gets.chomp.to_i
-				perform_deposit(acc, amount)
-			end
-		rescue => e
-			puts "Error: Invalid Amount"
-		end
-	end
-
-	# WITHDRAW AMOUNT
-	def withdraw
-		acc = verify_acc
-		begin
-			if acc
-				puts "Enter Amount"
-				amount = gets.chomp.to_i
-				perform_withdraw(acc , amount)
-			end
-		rescue => e
-			puts "Error: Invalid Amount"
-		end
-	end   
 
 	# SHOW BALANCE
 	def show_balance
@@ -85,46 +58,6 @@ class Account
 	end
 end
 
-	# PRIVATE DEPOSIT AMOUNT
-	private
-	def perform_deposit(acc , deposit_amount)
-	  begin
-      amount =  @account[0]['balance']
-	    amt =  amount.to_i
-	    if deposit_amount <= 0
-	      raise "Invalid Amount"
-	    else 
-	      amt = amt  + deposit_amount				
-	      # UPDATE BALANCE 
-			  update_query('accounts', {balance: amt}, {acc_no: @acc_number})
-			  puts "Deposit successfully Completed! "
-	      puts "Updated Successfully! "
-	      puts "Total Balance: #{amt}"
-	      end
-	    rescue => e
-	      puts "Error: #{e}"
-	    end
-	end
-
-	# PRIVATE WITHDRAW AMOUNT
-	def perform_withdraw(acc, withdraw_amount)
-	    begin
-	      amount =  @account[0]['balance']
-	      amt =  amount.to_i
-	      if withdraw_amount <= 0
-	        raise "Invalid Amount"
-	      elsif  amt < 100 || withdraw_amount >  amt
-	        raise "Oops!! Not Enough Balance"
-	      else
-	        amt =  amt - withdraw_amount
-				  update_query('accounts', {balance: amt}, {acc_no: @acc_number})
-	        puts "Updated Successfully! "
-	        puts "Total Balance: #{amt}"
-	        end
-	    rescue => e
-	      puts "Error: #{e}"
-	    end
-	end
 
 	# PRIVATE SHOW BALANCE
 	def perform_balance(acc)

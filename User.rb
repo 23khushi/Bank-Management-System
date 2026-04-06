@@ -16,33 +16,23 @@ class User
 		begin
 			@acc_type = user[:acc_type]
 			acc_type_verify
-			puts "hi account verify"
 			@bank_name = user[:bank_name]
-			puts " hi banklifgnd"
-			verify_bank_name
-			puts "Hi bank_name"
+			verify_bank_name(@bank_name)
 			@ifsc_code = user[:ifsc_code]
-			verify_ifsc_code
-			puts "Hi ifsc_code"
+			verify_ifsc_code(@bank_name, @ifsc_code)
 			@adhar_no = user[:adhar_no]
 			verify_aadhar
-			puts "Hi addhar"
 			@mobile_no = user[:mobile_no]
 			verify_mobile
-			puts "Hi mobile"
 			@name = user[:name]
 			verify_name
-			puts "Hi name"
 			@initial_bal = user[:initial_bal]
 			verify_initial_balance
-			puts "Hi initial bal"
 			@pass = user[:pass]
 			verify_pass
-			puts "Hi pass"
 			@balance = @initial_bal
 			@acc_otp = user[:acc_otp]
 			verify_otp
-			puts "Hi otp"
 			insert_records
 			
 		rescue => e
@@ -67,9 +57,9 @@ class User
 			insert_query('users' , ['adhar_no', 'mobile_no', 'name', 'initial_bal', 'pass', 'bank_name'], {adhar_no: @adhar_no, mobile_no: @mobile_no, name: @name, initial_bal: @initial_bal, pass: @pass , bank_name: @bank_name})
 			puts 'User Inserted Successfully.'
 			user_id = select_query(['uuid'], 'users' , {adhar_no: @adhar_no})
-     		ifsc = select_query(['ifsc_code'], 'bank', {ifsc: @ifsc_code})
+     		ifsc = select_query(['ifsc_code'], 'bank', {ifsc_code: @ifsc_code})
 			generate_account_number
-			insert_query('accounts',['acc_type', 'acc_no', 'balance', 'user_id', 'bank_id'], {acc_type: @acc_type, acc_no: @acc_no, balance: @balance, user_id: user_id.getvalue(0,0) , bank_id: ifsc.getvalue(0,0)})
+			insert_query('accounts',['acc_type', 'acc_no', 'balance', 'user_id', 'ifsc_code'], {acc_type: @acc_type, acc_no: @acc_no, balance: @balance, user_id: user_id.getvalue(0,0) , ifsc_code: ifsc.getvalue(0,0)})
 			puts "Congratulations!!!! Account Successfully Opened"
 			puts "Note down your account number: #{@acc_no}"
 		end
