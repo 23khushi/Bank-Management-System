@@ -2,12 +2,13 @@ require_relative './Account.rb'
 require_relative './Bank.rb'
 require_relative './User.rb'
 require_relative './transaction.rb'
+require 'csv'
 
 
 account = Account.new
 bank = Bank.new
 @input = User.new
-transaction = Transaction.new
+@transaction = Transaction.new
 
 def users_input
   users = [
@@ -46,10 +47,17 @@ def users_input
   }
   ]
   users.each do |user|
-    @input.create_account(user)
+    @input.create_account(user)  
   end
 
 end
+
+def transaction_data
+CSV.foreach('data.csv', headers: true) do |row|
+    @transaction.transfer(source_accno: row[0],destination_accno: row[1],transfer_amount: row[2])
+end
+end
+
 
 bank.insert_bank_details
 while (true)
@@ -70,7 +78,8 @@ while (true)
         when 1
            users_input
         when 2
-            transaction.transfer(source_accno: 19044711, destination_accno: 86988099, transfer_amount: 200)
+            # transaction.transfer(source_accno: 19044711, destination_accno: 86988099, transfer_amount: 200)
+            transaction_data
         when 3
              account.show_balance
         when 4
