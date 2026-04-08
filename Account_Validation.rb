@@ -1,6 +1,6 @@
 require_relative './database.rb'
 require_relative './Account.rb'
-
+require 'securerandom'
 module Account_Validation
  TYPE = ['saving' , 'current']
 
@@ -41,7 +41,7 @@ module Account_Validation
       else
         raise "Incorrect Password or Account doesnt exist!"
       end
-      @otp = rand(1000..9999)
+      @otp = rand(10**4)
       puts "Pop Up : Otp = #{otp}"
       puts "Enter Otp: "
 
@@ -88,7 +88,7 @@ module Account_Validation
   # GENERATE ACCOUNT NUMBER
   def generate_account_number
     begin
-		@acc_no = rand(10000000..99999999)
+		@acc_no = SecureRandom.rand(10**8)
       duplicate_account_no?(@acc_no)
 		@acc_no.to_s
 	rescue => e
@@ -103,6 +103,7 @@ module Account_Validation
     puts data.values
     if !data.values.empty?
       raise "Duplicate account number"
+      generate_account_number
     end 
   end   
 end

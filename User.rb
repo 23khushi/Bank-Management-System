@@ -8,7 +8,6 @@ class User
     include User_Validations
 	include BankValid
 	include Account_Validation
-	# include ::Bank_Validation
 	include Fire_Queries
     attr_accessor :name, :pass, :mobile_no,  :adhar_no, :acc_type, :acc_otp, :initial_bal
     attr_reader :bank_name, :ifsc_code
@@ -34,9 +33,8 @@ class User
 			@acc_otp = user[:acc_otp]
 			verify_otp
 			insert_records
-			
 		rescue => e
-			puts "Account creation failed: #{e}"
+			p "Account creation failed: #{e}"
 		end
 	end
 
@@ -48,8 +46,8 @@ class User
 			ifsc = select_query(['ifsc_code'], 'bank', {ifsc_code: @ifsc_code})
 			user_id = result.getvalue(0,1)
 			code = ifsc.getvalue(0,0)
-
 			generate_account_number
+
 			insert_query('accounts', ['acc_type', 'acc_no', 'balance', 'user_id', 'ifsc_code'], {acc_type: @acc_type, acc_no: @acc_no, balance: @balance, user_id: user_id, ifsc_code: code} )
 			puts "Congratulations!!!! Account Successfully Opened"
 			puts "Note down your account number: #{@acc_no}"

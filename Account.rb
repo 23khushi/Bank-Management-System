@@ -124,7 +124,7 @@ end
 	#PRIVATE USERS ALL ACCOUNTS.
 	def show_all_accounts(aadhar_card)
 		users_acc = CONN.exec_params(
-			'SELECT users.name, accounts.acc_type, bank.bank_name FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank ON accounts.bank_id = bank.bank_id WHERE users.adhar_no = $1 AND accounts.deleted_on IS NULL',
+			'SELECT users.name, accounts.acc_type, bank.bank_name, bank.ifsc_code FROM users JOIN accounts on users.uuid = accounts.user_id JOIN bank ON accounts.ifsc_code = bank.ifsc_code WHERE users.adhar_no = $1 AND accounts.deleted_on IS NULL',
 			[@aadhar_card.getvalue(0,0)]
 		)
 		rows = []
@@ -132,7 +132,7 @@ end
 	 		rows << [row[0],row[1],row[3]]
 		end
 		table = Terminal::Table.new(
-			headings: ["Name" , "Account type", "Bank name"],
+			headings: ["Name" , "Account type", "Bank name", "IFSC_code"],
 			rows: rows
 		)
 		puts table
