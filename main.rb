@@ -23,27 +23,27 @@ def users_input
 #     },
 
 
-  { acc_type: "Current",
-    adhar_no: "895455555555",
-    mobile_no: "4556677898",
-    name: "Disha Patel",
-    bank_name: "ICICI",
-    initial_bal: 1500,
-    pass: "1111",
-    acc_otp: "1234",
-    ifsc_code: "ICIC0001966"
-  }
+#   { acc_type: "Current",
+#     adhar_no: "895455555555",
+#     mobile_no: "4556677898",
+#     name: "Disha Patel",
+#     bank_name: "ICICI",
+#     initial_bal: 1500,
+#     pass: "1111",
+#     acc_otp: "1234",
+#     ifsc_code: "ICIC0001966"
+#   }
 
-  # { acc_type: "Current",
-  #   adhar_no: "2abcd234",
-  #   mobile_no: "9309375666",
-  #   name: "Harsh mehta",
-  #   bank_name: "HDFC",
-  #   initial_bal: 2000,
-  #   pass: "2233",  
-  #   acc_otp: "1234",
-  #   ifsc_code: "ICIC0000338" 
-  # }
+  { acc_type: "sAVING",
+    adhar_no: "455566773444",
+    mobile_no: "9209376666",
+    name: "Yogesh patel",
+    bank_name: "icici",
+    initial_bal: 2000,
+    pass: "2233",  
+    acc_otp: "1234",
+    ifsc_code: "ICIC0006493" 
+  }
   ]
   users.each do |user|
     @input.create_account(user)
@@ -70,7 +70,7 @@ while (true)
         when 1
            users_input
         when 2
-            transaction.transfer(19044711, 86988099, 'HDFC0000007', 'ICIC0001966', 200)
+            transaction.transfer(source_accno: 19044711, destination_accno: 86988099, transfer_amount: 200)
         when 3
              account.show_balance
         when 4

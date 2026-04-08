@@ -6,7 +6,6 @@ module BankValid
  
   def verify_bank_name(bank)
     bank_name = bank.downcase.to_sym
-   
     unless BANK_DETAILS.keys.include?(bank_name)
       raise "Invalid Bank Name"
     end
@@ -14,12 +13,12 @@ module BankValid
 
   def verify_ifsc_code(bank,ifsc)
     bank_name = bank.downcase.to_sym
-    unless BANK_DETAILS.keys.include?(bank_name)
-      bank_name.each do |i|
-        unless ifsc == i
-          puts "Invalid IFSC code"
-        end
+    if BANK_DETAILS.keys.include?(bank_name)
+     unless BANK_DETAILS[bank_name].include?(ifsc)
+        raise "Invalid IFSC code for bank #{bank_name}"
       end
+    else
+      raise "Invalid Bank Name"
     end
   end
 end
