@@ -53,9 +53,23 @@ def users_input
 end
 
 def transaction_data
-CSV.foreach('data.csv', headers: true) do |row|
-    @transaction.transfer(source_accno: row[0],destination_accno: row[1],transfer_amount: row[2])
-end
+  row_no = 2
+  begin 
+    CSV.foreach('data.csv', headers: true , header_converters: [:downcase, :symbol]) do |row|
+      raise "Error at first Column name: source_accno" unless row.headers.include?(:source_accno)
+      raise "Error at second Column name: destination_accno" unless row.headers.include?(:destination_accno)
+      raise "Error at third Column name: transfer_amount" unless row.headers.include?(:transfer_amount)
+      @transaction.transfer(source_accno: row[0],destination_accno: row[1],transfer_amount: row[2])
+    end
+  rescue PG::InvalidTextRepresentation
+    puts "Error at row: #{row_no}"
+    puts "Reason : Invalid Input Argument" 
+  rescue StandardError => e
+    puts "Error: #{e}"
+  rescue  => e
+    puts "Error at row: #{row_no}"
+    puts "Reason: #{e}"
+  end
 end
 
 

@@ -8,26 +8,21 @@ class Transaction
 
   include Fire_Queries
   def transfer(source_accno: ,destination_accno: , transfer_amount:) 
-    begin
       @transfer_amount = transfer_amount.to_i
       CONN.transaction do
         raise "Cannot transfer to self" if source_accno == destination_accno
-        
+
         @source_account = CONN.exec_params(
         'SELECT accounts.acc_no, accounts.ifsc_code, users.name, accounts.balance FROM accounts JOIN users on 
          accounts.user_id = users.uuid WHERE accounts.acc_no = $1 AND accounts.deleted_on IS NULL', 
         [source_accno]
         )
          if @source_account.values.empty?
-          raise "Source Account does not exist"
+          raise "Source Account does not exist for account number:  #{source_accno}"
         end
 
-        
-        raise "Not Enough Balance!" if (@transfer_amount <= 0) || (@transfer_amount > @source_account[0]['balance'].to_i)
-        
-  
-       
-      
+
+        raise "Not Enough Balance! for account number : #{source_accno}" if (@transfer_amount <= 0) || (@transfer_amount > @source_account[0]['balance'].to_i)
          
         @destination_account = CONN.exec_params(
           'SELECT accounts.acc_no, accounts.ifsc_code, users.name, accounts.balance FROM accounts JOIN users on  accounts.user_id = users.uuid
@@ -37,7 +32,7 @@ class Transaction
       
       
         if @destination_account.values.empty?
-          raise "Destination Account does not exist"
+          raise "Destination Account does not exist for account number: #{destination_accno}"
         end
       
         source_balance = @source_account[0]['balance'].to_i
@@ -50,11 +45,8 @@ class Transaction
         # CONN.exec_params("BEGIN")
         insert_transaction_details
         # CONN.exec_params("COMMIT")
-        puts "Transaction Successful"
+        puts "Transaction Successful!"
     end 
-    rescue => e
-      puts "Error #{e}" 
-    end
   end
 
 
